@@ -11,9 +11,9 @@ Then simply run the script  with the path to the folder containing your java cla
 A `-o` argument is available if you wish to override existing test.
 
 ### examples:
-`./testgen.sh .`
+`./testgen .`
 
-`./testgen.sh '/home/user/path/to/folder'`
+`./testgen '/home/user/path/to/folder'`
 
-`./testgen.sh -o .`
+`./testgen -o .`
 

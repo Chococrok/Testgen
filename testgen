@@ -2,13 +2,18 @@
 
 # functions
 log() {
-  for param in $@
-  do
-    echo "LOG: $param"
-  done
+  if [ "$logs" == true ]; then
+    for param in $@
+    do
+      echo "LOG: $param"
+    done
+  fi
 }
 
-# confirming override
+# default variables
+override=false
+
+# get arguments
 while [ $# -gt 0 ]
 do
   arg=$1
@@ -16,19 +21,22 @@ do
     -o)
       while [ -z $answer ]
       do
-        read -p 'Override all existiong tests (y/n)' -n 2 answer
+        echo -e "\n"
+        read -p 'Override all existing tests (y/n)' -n 2 answer
         echo -e "\r"
         
-        if [ -z $answer ]; then
-          answer=""
-        elif [ $answer = 'y' ]; then
+        if [ "$answer" = 'y' ]; then
           override=true;
-        elif [ $answer = 'n' ]; then
+        elif [ "$answer" = 'n' ]; then
           override=false
         else
           answer=""
         fi
       done
+      shift
+      ;;
+    -v)
+      logs=true
       shift
       ;;
     *)
@@ -39,7 +47,8 @@ do
 done
 
 # check if argument is ok, ask again if not
-while [ -z $dir ] || [ -z $dir ]; do
+while [ ! -e "$dir" ]; do
+  echo -e "\n$dir is not a valid path"
   read -p 'enter valide path: ' dir
 done
 
@@ -56,11 +65,13 @@ fi
 log "working dir: $dir" "realpath: $path" "testDirPath: $testDirPath"
 log "package: $package"
 
+# writting files if not existing or if override=true
+let "count=0"
 for file in `ls $dir`; do 
   class=`echo $file | awk -F'.' '{print $1}'`
   extension=`echo $file | awk -F'.' '{print $2}'`
 
-  if [ ! -z $extension ] && [ 'java' == $extension ]; then
+  if [ 'java' == "$extension" ]; then
     testFilePath=${testDirPath}/${file}
     if [ ! -e $testFilePath ] || [ $override = true ]; then
       echo "package $package" > $testFilePath
@@ -69,10 +80,18 @@ for file in `ls $dir`; do
       echo "  @Test" >> $testFilePath
       echo "  public void methodToTest() {}" >> $testFilePath
       echo "}" >> $testFilePath
-      log "SUCCESS file written: $testFilePath"
+      echo "SUCCESS file written: $testFilePath"
+      let "count++"
     fi
   fi
 
-  extension=""
-
 done
+
+log "$count files proccessed"
+
+if [ $count -gt 0 ]; then
+  echo -e "$count files were generated.\n"
+else
+  echo -e "\nNo file were generated."
+  echo -e "There are no java files in $dir \nor the tests already exists.\n"
+fi
