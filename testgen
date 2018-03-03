@@ -72,7 +72,7 @@ for file in `ls $dir`; do
   extension=`echo $file | awk -F'.' '{print $2}'`
 
   if [ 'java' == "$extension" ]; then
-    testFilePath=${testDirPath}/${file}
+    testFilePath=${testDirPath}/${class}Test.${extension}
     if [ ! -e $testFilePath ] || [ $override = true ]; then
       echo "package $package" > $testFilePath
       echo "" >> $testFilePath
