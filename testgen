@@ -77,11 +77,14 @@ for file in `ls $dir`; do
       echo "package ${package};" > $testFilePath
       echo "" >> $testFilePath
       echo "import org.junit.Test;" >> $testFilePath
+      echo "import org.junit.Assert;" >> $testFilePath
       echo "" >> $testFilePath
       echo "public class ${class}Test {" >> $testFilePath
       echo "" >> $testFilePath
       echo "  @Test" >> $testFilePath
-      echo "  public void methodToTest() {}" >> $testFilePath
+      echo "  public void methodToTest() {" >> $testFilePath
+      echo "    Assert.assertTrue(false);" >> $testFilePath
+      echo "  }" >> $testFilePath
       echo "" >> $testFilePath
       echo "}" >> $testFilePath
       echo "SUCCESS file written: $testFilePath"
