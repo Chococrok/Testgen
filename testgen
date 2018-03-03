@@ -74,11 +74,15 @@ for file in `ls $dir`; do
   if [ 'java' == "$extension" ]; then
     testFilePath=${testDirPath}/${class}Test.${extension}
     if [ ! -e $testFilePath ] || [ $override = true ]; then
-      echo "package $package" > $testFilePath
+      echo "package ${package};" > $testFilePath
       echo "" >> $testFilePath
-      echo "public class $class {" >> $testFilePath
+      echo "import org.junit.Test;" >> $testFilePath
+      echo "" >> $testFilePath
+      echo "public class ${class}Test {" >> $testFilePath
+      echo "" >> $testFilePath
       echo "  @Test" >> $testFilePath
       echo "  public void methodToTest() {}" >> $testFilePath
+      echo "" >> $testFilePath
       echo "}" >> $testFilePath
       echo "SUCCESS file written: $testFilePath"
       let "count++"
